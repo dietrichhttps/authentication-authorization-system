@@ -18,7 +18,7 @@ def check_permission(element_name, action, check_owner=False, owner_getter=None)
         @wraps(view_func)
         def wrapped_view(request, *args, **kwargs):
             # Проверка аутентификации
-            if not request.user or not hasattr(request.user, 'is_authenticated'):
+            if not request.user or not hasattr(request.user, 'id'):
                 return Response(
                     {'error': 'Необходима аутентификация'},
                     status=status.HTTP_401_UNAUTHORIZED
