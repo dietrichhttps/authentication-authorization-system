@@ -230,5 +230,5 @@ class Command(BaseCommand):
         self.stdout.write('  - admin@example.com / admin123 (Администратор)')
         self.stdout.write('  - manager@example.com / manager123 (Менеджер)')
         self.stdout.write('  - user@example.com / user123 (Пользователь)')
-        self.stdout.write('  - guest@example.com / guest123 (Гость)'))
+        self.stdout.write('  - guest@example.com / guest123 (Гость)')
 
