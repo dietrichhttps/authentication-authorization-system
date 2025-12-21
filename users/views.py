@@ -2,8 +2,6 @@ from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from django.views.decorators.csrf import csrf_exempt
-from django.http import JsonResponse
-from django.utils import timezone
 from datetime import datetime, timedelta
 
 from users.models import User
@@ -13,7 +11,7 @@ from users.serializers import (
     UserProfileSerializer,
     UserUpdateSerializer
 )
-from users.utils import generate_jwt_token, create_session, delete_session, get_user_from_session_token
+from users.utils import generate_jwt_token, create_session, delete_session
 
 
 @api_view(['POST'])
