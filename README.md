@@ -189,8 +189,14 @@ python manage.py migrate
 
 7. Загрузите тестовые данные:
 ```bash
-python manage.py loaddata initial_data.json
+python manage.py load_test_data
 ```
+
+Эта команда создаст:
+- Роли: admin, manager, user, guest
+- Бизнес-элементы: products, orders, shops, users, access_rules
+- Правила доступа для каждой роли
+- Тестовых пользователей (см. ниже)
 
 8. Создайте суперпользователя (опционально):
 ```bash
