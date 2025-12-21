@@ -89,6 +89,11 @@ class User(AbstractBaseUser):
         self.is_active = False
         self.save()
     
+    @property
+    def is_authenticated(self):
+        """Всегда True для не-анонимных пользователей"""
+        return True
+    
     def __str__(self):
         return self.email
 

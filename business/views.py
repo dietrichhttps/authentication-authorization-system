@@ -40,9 +40,12 @@ def get_order_owner(request, order_id):
     return None
 
 
-def get_order_owner_from_request(request, order_id):
+def get_order_owner_from_request(request, *args, **kwargs):
     """Получает ID владельца заказа из request"""
-    return get_order_owner(request, order_id)
+    order_id = kwargs.get('order_id')
+    if order_id:
+        return get_order_owner(request, order_id)
+    return None
 
 
 def get_shop_owner(request, shop_id):
@@ -69,9 +72,12 @@ def list_products(request):
     return Response({'products': user_products}, status=status.HTTP_200_OK)
 
 
-def get_product_owner_from_request(request, product_id):
+def get_product_owner_from_request(request, *args, **kwargs):
     """Получает ID владельца продукта из request"""
-    return get_product_owner(request, product_id)
+    product_id = kwargs.get('product_id')
+    if product_id:
+        return get_product_owner(request, product_id)
+    return None
 
 
 @api_view(['GET'])
