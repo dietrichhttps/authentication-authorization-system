@@ -7,9 +7,9 @@ class UserRegistrationSerializer(serializers.Serializer):
     email = serializers.EmailField()
     password = serializers.CharField(write_only=True, min_length=8)
     password_confirm = serializers.CharField(write_only=True, min_length=8)
-    first_name = serializers.CharField(max_length=100, required=False, allow_blank=True)
-    last_name = serializers.CharField(max_length=100, required=False, allow_blank=True)
-    middle_name = serializers.CharField(max_length=100, required=False, allow_blank=True)
+    first_name = serializers.CharField(max_length=100, required=True)
+    last_name = serializers.CharField(max_length=100, required=True)
+    middle_name = serializers.CharField(max_length=100, required=True)
     
     def validate(self, attrs):
         if attrs['password'] != attrs['password_confirm']:

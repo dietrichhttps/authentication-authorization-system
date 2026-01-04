@@ -24,9 +24,9 @@ def register(request):
         user = User.objects.create_user(
             email=serializer.validated_data['email'],
             password=serializer.validated_data['password'],
-            first_name=serializer.validated_data.get('first_name', ''),
-            last_name=serializer.validated_data.get('last_name', ''),
-            middle_name=serializer.validated_data.get('middle_name', ''),
+            first_name=serializer.validated_data['first_name'],
+            last_name=serializer.validated_data['last_name'],
+            middle_name=serializer.validated_data['middle_name'],
         )
         
         # Генерируем токен
