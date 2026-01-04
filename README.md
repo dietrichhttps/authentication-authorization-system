@@ -437,8 +437,3 @@ authentication-authorization-system/
 ├── docker-entrypoint.sh  # Скрипт инициализации для Docker
 └── requirements.txt      # Зависимости Python
 ```
-
-## Лицензия
-
-MIT
-
