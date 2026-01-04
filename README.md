@@ -144,11 +144,62 @@
 
 ### Требования
 
+Для Docker (рекомендуется):
+- Docker 20.10+
+- Docker Compose 2.0+
+
+Для локальной установки:
 - Python 3.8+
 - PostgreSQL 12+
 - pip
 
-### Установка
+## Установка через Docker (рекомендуется)
+
+Самый простой способ запустить проект - использовать Docker Compose:
+
+1. Клонируйте репозиторий:
+```bash
+git clone https://github.com/dietrichhttps/authentication-authorization-system.git
+cd authentication-authorization-system
+```
+
+2. Запустите проект через Docker Compose:
+```bash
+docker-compose up --build
+```
+
+Эта команда автоматически:
+- Создаст и запустит контейнер с PostgreSQL
+- Соберет и запустит контейнер с Django приложением
+- Применит миграции
+- Загрузит тестовые данные
+- Запустит сервер на `http://localhost:8000`
+
+3. Приложение будет доступно по адресу: `http://localhost:8000`
+
+### Работа с Docker
+
+Остановить контейнеры:
+```bash
+docker-compose down
+```
+
+Остановить и удалить volumes (очистить базу данных):
+```bash
+docker-compose down -v
+```
+
+Просмотреть логи:
+```bash
+docker-compose logs -f
+```
+
+Выполнить команду в контейнере:
+```bash
+docker-compose exec web python manage.py createsuperuser
+```
+
+## Локальная установка
 
 1. Клонируйте репозиторий или скопируйте файлы проекта
 
@@ -174,20 +225,18 @@ CREATE ROLE your_username WITH LOGIN CREATEDB PASSWORD 'your_password';
 -- Или используйте существующего пользователя (например, postgres)
 ```
 
-Если вы используете пользователя отличного от `postgres`, обновите настройки в `.env` файле.
-
 5. Настройте переменные окружения (создайте файл `.env` в корне проекта):
 ```
 SECRET_KEY=your-secret-key-here
 JWT_SECRET_KEY=your-jwt-secret-key-here
 DB_NAME=auth_system
-DB_USER=your_username  # По умолчанию используется 'aliceglass'
+DB_USER=your_username
 DB_PASSWORD=your_password
 DB_HOST=localhost
 DB_PORT=5432
 ```
 
-**Важно:** Если вы используете пользователя отличного от `aliceglass`, убедитесь что у него есть права на создание таблиц в схеме `public`:
+**Важно:** Если вы используете пользователя отличного от `postgres`, убедитесь что у него есть права на создание таблиц в схеме `public`:
 ```sql
 GRANT ALL PRIVILEGES ON SCHEMA public TO your_username;
 GRANT ALL PRIVILEGES ON DATABASE auth_system TO your_username;
@@ -383,7 +432,10 @@ authentication-authorization-system/
 ├── business/             # Приложение бизнес-объектов (Mock)
 │   ├── views.py          # Mock-views для демонстрации
 │   └── urls.py           # URL маршруты
-└── requirements.txt      # Зависимости
+├── Dockerfile            # Docker образ для приложения
+├── docker-compose.yml    # Docker Compose конфигурация
+├── docker-entrypoint.sh  # Скрипт инициализации для Docker
+└── requirements.txt      # Зависимости Python
 ```
 
 ## Лицензия
