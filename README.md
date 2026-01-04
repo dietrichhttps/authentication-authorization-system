@@ -163,7 +163,25 @@ git clone https://github.com/dietrichhttps/authentication-authorization-system.g
 cd authentication-authorization-system
 ```
 
-2. Запустите проект через Docker Compose:
+2. Создайте файл `.env` на основе `.env.example`:
+```bash
+cp .env.example .env
+```
+
+Или создайте `.env` вручную со следующим содержимым:
+```
+SECRET_KEY=your-secret-key-here-change-in-production
+JWT_SECRET_KEY=your-jwt-secret-key-here-change-in-production
+DB_NAME=auth_system
+DB_USER=postgres
+DB_PASSWORD=postgres
+DB_HOST=db
+DB_PORT=5432
+```
+
+**Важно:** Для Docker используйте `DB_HOST=db` (имя сервиса в docker-compose.yml).
+
+3. Запустите проект через Docker Compose:
 ```bash
 docker-compose up --build
 ```
@@ -175,7 +193,7 @@ docker-compose up --build
 - Загрузит тестовые данные
 - Запустит сервер на `http://localhost:8000`
 
-3. Приложение будет доступно по адресу: `http://localhost:8000`
+4. Приложение будет доступно по адресу: `http://localhost:8000`
 
 ### Работа с Docker
 
