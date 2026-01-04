@@ -163,22 +163,36 @@ source venv/bin/activate  # На Windows: venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
-4. Создайте базу данных PostgreSQL:
+4. Создайте базу данных PostgreSQL и настройте пользователя:
 ```sql
+-- Создайте базу данных
 CREATE DATABASE auth_system;
-CREATE USER postgres WITH PASSWORD 'postgres';
-GRANT ALL PRIVILEGES ON DATABASE auth_system TO postgres;
+
+-- Создайте роль пользователя (если нужно)
+CREATE ROLE your_username WITH LOGIN CREATEDB PASSWORD 'your_password';
+
+-- Или используйте существующего пользователя (например, postgres)
 ```
+
+Если вы используете пользователя отличного от `postgres`, обновите настройки в `.env` файле.
 
 5. Настройте переменные окружения (создайте файл `.env` в корне проекта):
 ```
 SECRET_KEY=your-secret-key-here
 JWT_SECRET_KEY=your-jwt-secret-key-here
 DB_NAME=auth_system
-DB_USER=postgres
-DB_PASSWORD=postgres
+DB_USER=your_username  # По умолчанию используется 'aliceglass'
+DB_PASSWORD=your_password
 DB_HOST=localhost
 DB_PORT=5432
+```
+
+**Важно:** Если вы используете пользователя отличного от `aliceglass`, убедитесь что у него есть права на создание таблиц в схеме `public`:
+```sql
+GRANT ALL PRIVILEGES ON SCHEMA public TO your_username;
+GRANT ALL PRIVILEGES ON DATABASE auth_system TO your_username;
+ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON TABLES TO your_username;
+ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON SEQUENCES TO your_username;
 ```
 
 6. Примените миграции:
@@ -197,6 +211,17 @@ python manage.py load_test_data
 - Бизнес-элементы: products, orders, shops, users, access_rules
 - Правила доступа для каждой роли
 - Тестовых пользователей (см. ниже)
+
+### Тестовые пользователи
+
+После загрузки тестовых данных доступны следующие пользователи:
+
+| Email | Пароль | Роль | Описание |
+|-------|--------|------|----------|
+| admin@example.com | admin123 | admin | Полный доступ ко всем ресурсам |
+| manager@example.com | manager123 | manager | Расширенные права на продукты и заказы |
+| user@example.com | user123 | user | Базовые права (только свои объекты) |
+| guest@example.com | guest123 | guest | Только чтение продуктов и магазинов |
 
 8. Создайте суперпользователя (опционально):
 ```bash
@@ -249,6 +274,8 @@ python manage.py runserver
 
 ### Пример регистрации:
 
+**Важно:** Все поля (first_name, last_name, middle_name) обязательны для заполнения.
+
 ```bash
 curl -X POST http://localhost:8000/api/auth/register/ \
   -H "Content-Type: application/json" \
@@ -257,7 +284,8 @@ curl -X POST http://localhost:8000/api/auth/register/ \
     "password": "password123",
     "password_confirm": "password123",
     "first_name": "Иван",
-    "last_name": "Иванов"
+    "last_name": "Иванов",
+    "middle_name": "Иванович"
   }'
 ```
 
@@ -268,9 +296,11 @@ curl -X POST http://localhost:8000/api/auth/login/ \
   -H "Content-Type: application/json" \
   -d '{
     "email": "user@example.com",
-    "password": "password123"
+    "password": "user123"
   }'
 ```
+
+Ответ содержит JWT токен, который можно использовать для последующих запросов, а также устанавливает cookie с `session_id`.
 
 ### Пример запроса с токеном:
 
@@ -279,10 +309,36 @@ curl -X GET http://localhost:8000/api/auth/profile/ \
   -H "Authorization: Bearer YOUR_JWT_TOKEN"
 ```
 
-Или с использованием cookie:
+Или с использованием cookie (автоматически устанавливается при login/register):
 ```bash
 curl -X GET http://localhost:8000/api/auth/profile/ \
   -H "Cookie: session_id=YOUR_SESSION_TOKEN"
+```
+
+### Пример получения списка продуктов:
+
+```bash
+curl -X GET http://localhost:8000/api/business/products/ \
+  -H "Authorization: Bearer YOUR_JWT_TOKEN"
+```
+
+### Пример управления правилами доступа (только для администратора):
+
+```bash
+# Получить все правила доступа
+curl -X GET http://localhost:8000/api/permissions/access-rules/ \
+  -H "Authorization: Bearer ADMIN_JWT_TOKEN"
+
+# Создать новое правило
+curl -X POST http://localhost:8000/api/permissions/access-rules/create/ \
+  -H "Authorization: Bearer ADMIN_JWT_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "role": 2,
+    "element": 1,
+    "read_permission": true,
+    "create_permission": true
+  }'
 ```
 
 ## Аутентификация
