@@ -168,10 +168,31 @@ cd authentication-authorization-system
 cp .env.example .env
 ```
 
-Или создайте `.env` вручную со следующим содержимым:
+3. Сгенерируйте секретные ключи и добавьте их в `.env`:
+
+**Для SECRET_KEY и JWT_SECRET_KEY** нужно использовать случайно сгенерированные строки. Вы можете сгенерировать их одним из способов:
+
+**Способ 1: Используя Python (рекомендуется):**
+```bash
+python3 -c "from django.core.management.utils import get_random_secret_key; import secrets; print('SECRET_KEY=' + get_random_secret_key()); print('JWT_SECRET_KEY=' + secrets.token_urlsafe(32))"
 ```
-SECRET_KEY=your-secret-key-here-change-in-production
-JWT_SECRET_KEY=your-jwt-secret-key-here-change-in-production
+
+**Способ 2: Используя OpenSSL:**
+```bash
+openssl rand -hex 32  # Для SECRET_KEY
+openssl rand -hex 32  # Для JWT_SECRET_KEY
+```
+
+**Способ 3: Используя Python secrets (альтернатива):**
+```bash
+python3 -c "import secrets; print(secrets.token_urlsafe(50))"  # Для SECRET_KEY
+python3 -c "import secrets; print(secrets.token_urlsafe(32))"  # Для JWT_SECRET_KEY
+```
+
+Откройте файл `.env` и замените значения:
+```
+SECRET_KEY=your-generated-secret-key-here
+JWT_SECRET_KEY=your-generated-jwt-secret-key-here
 DB_NAME=auth_system
 DB_USER=postgres
 DB_PASSWORD=postgres
@@ -179,9 +200,12 @@ DB_HOST=db
 DB_PORT=5432
 ```
 
-**Важно:** Для Docker используйте `DB_HOST=db` (имя сервиса в docker-compose.yml).
+**Важно:** 
+- Для Docker используйте `DB_HOST=db` (имя сервиса в docker-compose.yml)
+- Никогда не коммитьте реальные секретные ключи в git (файл `.env` уже в `.gitignore`)
+- Используйте разные ключи для production и development окружений
 
-3. Запустите проект через Docker Compose:
+4. Запустите проект через Docker Compose:
 ```bash
 docker-compose up --build
 ```
@@ -193,7 +217,7 @@ docker-compose up --build
 - Загрузит тестовые данные
 - Запустит сервер на `http://localhost:8000`
 
-4. Приложение будет доступно по адресу: `http://localhost:8000`
+5. Приложение будет доступно по адресу: `http://localhost:8000`
 
 ### Работа с Docker
 
@@ -268,7 +292,7 @@ python manage.py makemigrations
 python manage.py migrate
 ```
 
-7. Загрузите тестовые данные:
+8. Загрузите тестовые данные:
 ```bash
 python manage.py load_test_data
 ```
@@ -290,12 +314,12 @@ python manage.py load_test_data
 | user@example.com | user123 | user | Базовые права (только свои объекты) |
 | guest@example.com | guest123 | guest | Только чтение продуктов и магазинов |
 
-8. Создайте суперпользователя (опционально):
+9. Создайте суперпользователя (опционально):
 ```bash
 python manage.py createsuperuser
 ```
 
-9. Запустите сервер разработки:
+10. Запустите сервер разработки:
 ```bash
 python manage.py runserver
 ```
